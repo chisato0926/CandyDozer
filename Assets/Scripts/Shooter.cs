@@ -6,6 +6,7 @@ public class Shooter : MonoBehaviour
 {
     public GameObject[] candyPrefabs;
     public Transform candyParentTransform; //親子関係を結ぶときにtransformの参照が必要なため
+    public CandyManager candyManager;
     public float shotForce;
     public float shortTorque;
     public float baseWidth;
@@ -16,6 +17,10 @@ public class Shooter : MonoBehaviour
     }
 
     public void Shot() {
+        //キャンディを生成できる条件外ならばShotしない
+        if (candyManager.GetCandyAmount() <= 0) {
+            return;
+        }
         //プレハブからCandyオブジェクトを生成
         GameObject candy = (GameObject) Instantiate(
             SampleCandy(),
@@ -31,6 +36,8 @@ public class Shooter : MonoBehaviour
         Rigidbody candyRigidbody = candy.GetComponent<Rigidbody>();
         candyRigidbody.AddForce(transform.forward * shotForce);
         candyRigidbody.AddTorque(new Vector3(0, shortTorque, 0));
+        //キャンディのストックを消費
+        candyManager.ConsumeCandy();
     }
 
     // Update is called once per frame
